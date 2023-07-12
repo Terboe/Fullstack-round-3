@@ -26,6 +26,7 @@ let persons = [
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 app.use(morgan(function (tokens, req, res) {
   ret = [
     tokens.method(req, res),
