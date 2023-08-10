@@ -5,6 +5,36 @@ const morgan = require('morgan')
 const { token } = require('morgan')
 const cors = require('cors')
 
+
+const mongoose = require('mongoose')
+
+const url =
+  `mongodb+srv://akutervonen:${password}@cluster0.u46f7d1.mongodb.net/personsApp?retryWrites=true&w=majority`
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: Number,
+})
+
+personSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+const Person = mongoose.model('Person', personSchema)
+
+
+
+
+
+
+
 let persons = [
       {
         "name": "Mary Poppendieck",
@@ -41,7 +71,11 @@ app.use(morgan(function (tokens, req, res) {
   return (ret)
   }))
 app.get('/api/persons' , (req,res) => {
+
+  Person.find({}).then(persons => {
     res.json(persons)
+    mongoose.connection.close()
+  })
 })
 
 app.get('/api/info',   (req,res) => {
